@@ -53,7 +53,7 @@ local function pokeAllUsers(serverConnectionHandlerID,pokeText)
 		if error == ts3errors.ERROR_ok then
 				ts3.requestClientPoke(serverConnectionHandlerID, clients[i], pokeText)
 		else
-			ts3.printMessageToCurrentTab("An error has occured")
+			ts3.printMessageToCurrentTab("An error has occured ")
 		end
 	end
 end
