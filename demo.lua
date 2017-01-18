@@ -7,6 +7,10 @@ require("ts3errors")
 -- Call these function from the TeamSpeak 3 client console via: /lua run testmodule.<function>
 -- Note the serverConnectionHandlerID of the current server is always passed.
 
+-- Pokes a selected user by their nickname
+-- userName = user to be poked
+-- pokeText = text to be used in the poke
+-- pokeAmount = amount of times the poke is to be sent to the user
 local function pokeUser(serverConnectionHandlerID, userName, pokeText, pokeAmount)
 	local userToBePoked
 
@@ -38,6 +42,7 @@ local function pokeUser(serverConnectionHandlerID, userName, pokeText, pokeAmoun
 end
 
 -- Pokes all users on the teamspeak server
+-- pokeText = text to be sent to all connected users 
 local function pokeAllUsers(serverConnectionHandlerID,pokeText)
 	-- Get Client List
 	local clients, error = ts3.getClientList(serverConnectionHandlerID)
@@ -60,20 +65,24 @@ end
 
 --Helper functions
 
+--Return own clientID
 local function getMyClientID(serverConnectionHandlerID)
-
+	return ts3.getClientID(serverConnectionHandlerID)
 end
 
+--Return all clientIDs in current channel
 local function getAllClientsInChannel(serverConnectionHandlerID)
-
+	local currentChannelID = ts3.getChannelOfClient(serverConnectionHandlerID, getMyClientID(serverConnectionHandlerID))
+	return ts3.getChannelClientList(serverConnectionHandlerID, currentChannelID)
 end
 
-local function testModule(serverConnectionHandlerID)
+--Test function for checking if the module has being loaded
+local function testFunction(serverConnectionHandlerID)
 	ts3.printMessageToCurrentTab("Working...")
 end
 
 TSAnnoy = {
 	pokeUser = pokeUser,
 	pokeAllUsers = pokeAllUsers,
-	testModule = testModule,
+	testFunction = testFunction,
 }
