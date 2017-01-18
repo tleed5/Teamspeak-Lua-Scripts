@@ -37,6 +37,7 @@ local function pokeUser(serverConnectionHandlerID, userName, pokeText, pokeAmoun
 	ts3.printMessageToCurrentTab("Poking user " .. userToBePoked)
 end
 
+-- Pokes all users on the teamspeak server
 local function pokeAllUsers(serverConnectionHandlerID,pokeText)
 	-- Get Client List
 	local clients, error = ts3.getClientList(serverConnectionHandlerID)
@@ -52,7 +53,7 @@ local function pokeAllUsers(serverConnectionHandlerID,pokeText)
 		if error == ts3errors.ERROR_ok then
 				ts3.requestClientPoke(serverConnectionHandlerID, clients[i], pokeText)
 		else
-			ts3.printMessageToCurrentTab("it's fucked")
+			ts3.printMessageToCurrentTab("An error has occured")
 		end
 	end
 end
