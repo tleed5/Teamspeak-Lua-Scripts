@@ -42,7 +42,7 @@ local function pokeUser(serverConnectionHandlerID, userName, pokeText, pokeAmoun
 end
 
 -- Pokes all users on the teamspeak server
--- pokeText = text to be sent to all connected users 
+-- pokeText = text to be sent to all connected users
 local function pokeAllUsers(serverConnectionHandlerID,pokeText)
 	-- Get Client List
 	local clients, error = ts3.getClientList(serverConnectionHandlerID)
@@ -81,6 +81,7 @@ local function testFunction(serverConnectionHandlerID)
 	ts3.printMessageToCurrentTab("Working...")
 end
 
+--Specify all functions that you want to be usable in TS here
 TSAnnoy = {
 	pokeUser = pokeUser,
 	pokeAllUsers = pokeAllUsers,
