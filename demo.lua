@@ -64,6 +64,7 @@ local function pokeUser(serverConnectionHandlerID, userName, pokeText, pokeAmoun
 		end
 	end
 	for i = 1, pokeAmount, 1 do
+    sleep(0.5)
 		ts3.requestClientPoke(serverConnectionHandlerID, userToBePoked, pokeText)
 	end
 	ts3.printMessageToCurrentTab("Poking user " .. userToBePoked)
@@ -103,6 +104,7 @@ local function kickClientFromServer(serverConnectionHandlerID, clientID)
 end
 
 --Picks a random person in the channel to kick
+-- Note it can also kick your own client
 local function kickRoulette(serverConnectionHandlerID)
 	local clients = getAllClientsInChannel(serverConnectionHandlerID)
 	local clientToBeKicked = math.random(1, getTableSize(clients))
