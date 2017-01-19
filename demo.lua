@@ -7,6 +7,34 @@ require("ts3errors")
 -- Call these function from the TeamSpeak 3 client console via: /lua run testmodule.<function>
 -- Note the serverConnectionHandlerID of the current server is always passed.
 
+--Function for delaying for seconds
+math.randomseed( os.time() )
+local clock = os.clock
+function sleep(n)  -- seconds
+  local t0 = clock()
+  while clock() - t0 <= n do end
+end
+
+--Return all clientIDs in current channel
+local function getAllClientsInChannel(serverConnectionHandlerID)
+	local currentChannelID, error = ts3.getChannelOfClient(serverConnectionHandlerID, ts3.getClientID(serverConnectionHandlerID))
+	if error == ts3errors.ERROR_not_connected then
+		ts3.printMessageToCurrentTab("Not connected")
+		return
+	elseif error ~= ts3errors.ERROR_ok then
+		print("Error getting client list: " .. error)
+		return
+	end
+	return ts3.getChannelClientList(serverConnectionHandlerID, currentChannelID)
+end
+
+--Returns the amount of elements in a table
+local function getTableSize(T)
+	local count = 0
+  for _ in pairs(T) do count = count + 1 end
+  return count
+end
+
 -- Pokes a selected user by their nickname
 -- userName = user to be poked
 -- pokeText = text to be used in the poke
@@ -63,18 +91,34 @@ local function pokeAllUsers(serverConnectionHandlerID,pokeText)
 	end
 end
 
+--Kick yourself from the current server
+local function kickOwnClientFromServer(serverConnectionHandlerID, index)
+	ts3.requestClientKickFromServer(serverConnectionHandlerID,ts3.getClientID(serverConnectionHandlerID), "Good idea")
+	ts3.printMessageToCurrentTab("Kicking yourself")
+end
+--Kick a client from the server based on their ID
+local function kickClientFromServer(serverConnectionHandlerID, clientID)
+	ts3.requestClientKickFromServer(serverConnectionHandlerID,clientID, "You lose")
+	ts3.printMessageToCurrentTab("Kicking user " .. clientID)
+end
+
+--Picks a random person in the channel to kick
+local function kickRoulette(serverConnectionHandlerID)
+	local clients = getAllClientsInChannel(serverConnectionHandlerID)
+	local clientToBeKicked = math.random(1, getTableSize(clients))
+
+	ts3.requestSendChannelTextMsg(serverConnectionHandlerID, "3", ts3.getChannelOfClient(serverConnectionHandlerID, ts3.getClientID(serverConnectionHandlerID)))
+	sleep(1)
+	ts3.requestSendChannelTextMsg(serverConnectionHandlerID, "2", ts3.getChannelOfClient(serverConnectionHandlerID, ts3.getClientID(serverConnectionHandlerID)))
+	sleep(1)
+	ts3.requestSendChannelTextMsg(serverConnectionHandlerID, "1", ts3.getChannelOfClient(serverConnectionHandlerID, ts3.getClientID(serverConnectionHandlerID)))
+	sleep(1)
+	ts3.requestSendChannelTextMsg(serverConnectionHandlerID, "Kicking Client " .. ts3.getClientVariableAsString(serverConnectionHandlerID, clients[clientToBeKicked], ts3defs.ClientProperties.CLIENT_NICKNAME), ts3.getChannelOfClient(serverConnectionHandlerID, ts3.getClientID(serverConnectionHandlerID)))
+
+	kickClientFromServer(serverConnectionHandlerID,clients[clientToBeKicked])
+end
+
 --Helper functions
-
---Return own clientID
-local function getMyClientID(serverConnectionHandlerID)
-	return ts3.getClientID(serverConnectionHandlerID)
-end
-
---Return all clientIDs in current channel
-local function getAllClientsInChannel(serverConnectionHandlerID)
-	local currentChannelID = ts3.getChannelOfClient(serverConnectionHandlerID, getMyClientID(serverConnectionHandlerID))
-	return ts3.getChannelClientList(serverConnectionHandlerID, currentChannelID)
-end
 
 --Test function for checking if the module has being loaded
 local function testFunction(serverConnectionHandlerID)
@@ -85,5 +129,7 @@ end
 TSAnnoy = {
 	pokeUser = pokeUser,
 	pokeAllUsers = pokeAllUsers,
+	kickOwnClientFromServer = kickOwnClientFromServer,
+	kickRoulette = kickRoulette,
 	testFunction = testFunction,
 }
