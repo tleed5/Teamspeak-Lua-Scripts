@@ -35,6 +35,15 @@ local function getTableSize(T)
   return count
 end
 
+local function printAllCurrentClients(serverConnectionHandlerID)
+  local clients = getAllClientsInChannel(serverConnectionHandlerID)
+
+  for i=1, #clients do
+    ts3.printMessageToCurrentTab(clients[i])
+    ts3.printMessageToCurrentTab(ts3.getClientVariableAsString(serverConnectionHandlerID, clients[i], ts3defs.ClientProperties.CLIENT_NICKNAME))
+  end
+end
+
 -- Pokes a selected user by their nickname
 -- userName = user to be poked
 -- pokeText = text to be used in the poke
@@ -68,6 +77,14 @@ local function pokeUser(serverConnectionHandlerID, userName, pokeText, pokeAmoun
 		ts3.requestClientPoke(serverConnectionHandlerID, userToBePoked, pokeText)
 	end
 	ts3.printMessageToCurrentTab("Poking user " .. userToBePoked)
+end
+
+local function pokeUserWithID(serverConnectionHandlerID,clientID, pokeText, pokeAmount)
+  for i = 1, pokeAmount, 1 do
+    sleep(0.5)
+    ts3.requestClientPoke(serverConnectionHandlerID, clientID, pokeText)
+  end
+  ts3.printMessageToCurrentTab("Poking user " .. ts3.getClientVariableAsString(serverConnectionHandlerID, clientID, ts3defs.ClientProperties.CLIENT_NICKNAME))
 end
 
 -- Pokes all users on the teamspeak server
@@ -129,7 +146,9 @@ end
 
 --Specify all functions that you want to be usable in TS here
 TSAnnoy = {
+  printAllCurrentClients = printAllCurrentClients,
 	pokeUser = pokeUser,
+  pokeUserWithID = pokeUserWithID,
 	pokeAllUsers = pokeAllUsers,
 	kickOwnClientFromServer = kickOwnClientFromServer,
 	kickRoulette = kickRoulette,
