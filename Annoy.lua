@@ -122,18 +122,28 @@ end
 
 --Picks a random person in the channel to kick
 -- Note it can also kick your own client
-local function kickRoulette(serverConnectionHandlerID)
+local function kickRoulette(serverConnectionHandlerID, amount)
 	local clients = getAllClientsInChannel(serverConnectionHandlerID)
 	local clientToBeKicked = math.random(1, getTableSize(clients))
 
-	ts3.requestSendChannelTextMsg(serverConnectionHandlerID, "3", ts3.getChannelOfClient(serverConnectionHandlerID, ts3.getClientID(serverConnectionHandlerID)))
-	sleep(1)
-	ts3.requestSendChannelTextMsg(serverConnectionHandlerID, "2", ts3.getChannelOfClient(serverConnectionHandlerID, ts3.getClientID(serverConnectionHandlerID)))
-	sleep(1)
-	ts3.requestSendChannelTextMsg(serverConnectionHandlerID, "1", ts3.getChannelOfClient(serverConnectionHandlerID, ts3.getClientID(serverConnectionHandlerID)))
-	sleep(1)
-	ts3.requestSendChannelTextMsg(serverConnectionHandlerID, "Kicking Client " .. ts3.getClientVariableAsString(serverConnectionHandlerID, clients[clientToBeKicked], ts3defs.ClientProperties.CLIENT_NICKNAME), ts3.getChannelOfClient(serverConnectionHandlerID, ts3.getClientID(serverConnectionHandlerID)))
+  for i = 1, amount, 1 do
+    local clientToBeKicked = math.random(1, getTableSize(clients))
+  	ts3.requestSendChannelTextMsg(serverConnectionHandlerID, "3", ts3.getChannelOfClient(serverConnectionHandlerID, ts3.getClientID(serverConnectionHandlerID)))
+  	sleep(1)
+  	ts3.requestSendChannelTextMsg(serverConnectionHandlerID, "2", ts3.getChannelOfClient(serverConnectionHandlerID, ts3.getClientID(serverConnectionHandlerID)))
+  	sleep(1)
+  	ts3.requestSendChannelTextMsg(serverConnectionHandlerID, "1", ts3.getChannelOfClient(serverConnectionHandlerID, ts3.getClientID(serverConnectionHandlerID)))
+  	sleep(1)
+  	ts3.requestSendChannelTextMsg(serverConnectionHandlerID, "Kicking Client " .. ts3.getClientVariableAsString(serverConnectionHandlerID, clients[clientToBeKicked], ts3defs.ClientProperties.CLIENT_NICKNAME), ts3.getChannelOfClient(serverConnectionHandlerID, ts3.getClientID(serverConnectionHandlerID)))
+  	kickClientFromServer(serverConnectionHandlerID,clients[clientToBeKicked])
+  end
+end
 
+--Picks a random person in the channel to kick
+-- Note it can also kick your own client
+local function silentKickRoulette(serverConnectionHandlerID)
+	local clients = getAllClientsInChannel(serverConnectionHandlerID)
+	local clientToBeKicked = math.random(1, getTableSize(clients))
 	kickClientFromServer(serverConnectionHandlerID,clients[clientToBeKicked])
 end
 
@@ -152,5 +162,6 @@ TSAnnoy = {
 	pokeAllUsers = pokeAllUsers,
 	kickOwnClientFromServer = kickOwnClientFromServer,
 	kickRoulette = kickRoulette,
+  silentKickRoulette = silentKickRoulette,
 	testFunction = testFunction,
 }

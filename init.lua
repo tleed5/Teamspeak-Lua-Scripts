@@ -4,7 +4,7 @@
 --
 
 require("ts3init")            -- Required for ts3RegisterModule
-require("TSAnnoy/demo")    -- Some demo functions callable from TS3 client chat input
+require("TSAnnoy/Annoy")    -- Some demo functions callable from TS3 client chat input
 
 local MODULE_NAME = "TSAnnoy"
 
